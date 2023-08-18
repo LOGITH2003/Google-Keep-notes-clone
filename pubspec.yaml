@@ -7,7 +7,7 @@ version: 1.0.0+1
 environment:
   sdk: '>=3.0.3 <4.0.0'
 
-isar_version: &isar_version 3.1.0
+isar_version: &isar_version 3.0.5
 
 dependencies:
   flutter:
@@ -15,12 +15,10 @@ dependencies:
  
   #**************************
   intl: ^0.17.0
-  isar_generator: *isar_version
-  path_provider: ^2.0.11
   build_runner: any
   dio: ^4.0.6
   flash: ^2.0.3+3
-  provider: ^6.0.3
+  # provider: ^6.0.3
   file_picker: ^5.2.0+1
   #open_file: ^2.1.1
   carousel_slider: ^4.1.1
@@ -45,8 +43,8 @@ dev_dependencies:
 
   flutter_lints: ^2.0.0
 
-  #build_runner:
-  #isar_generator: *isar_version
+  build_runner:
+  isar_generator: *isar_version
 
 flutter:
 

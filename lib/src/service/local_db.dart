@@ -12,7 +12,7 @@ class LocalDBService {
 
   Future<Isar> openDB() async {
     if(Isar.instanceNames.isEmpty){
-      return await Isar.open([NoteSchema],inspector: true, directory: '',);
+      return await Isar.open([NoteSchema],inspector: true);
     }
     return Future.value(Isar.getInstance());
   }
