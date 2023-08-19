@@ -43,7 +43,7 @@ dev_dependencies:
 
   flutter_lints: ^2.0.0
 
-  build_runner:
+  #build_runner:
   isar_generator: *isar_version
 
 flutter:

@@ -5,42 +5,65 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:isar/isar.dart';
 import 'package:loacal_notes/src/model/note.dart';
+import 'package:loacal_notes/src/res/assets.dart';
 import 'package:loacal_notes/src/service/local_db.dart';
+import 'package:lottie/lottie.dart';
 
-class CreatenoteView extends StatefulWidget {
-  const CreatenoteView({super.key});
+class CreateNoteView extends StatefulWidget {
+  const CreateNoteView({super.key, this.note});
+
+  final Note? note;
 
   @override
-  State<CreatenoteView> createState() => _CreatenoteViewState();
+  State<CreateNoteView> createState() => _CreateNoteViewState();
 }
 
-class _CreatenoteViewState extends State<CreatenoteView> {
-  
+class _CreateNoteViewState extends State<CreateNoteView> {
   final _titleController = TextEditingController();
   final _descriptionController = TextEditingController();
 
-  final localDB = LocalDBService();
+  final localDb = LocalDBService();
+
+  @override
+  void initState() {
+    super.initState();
+
+    if (widget.note != null) {
+      _titleController.text = widget.note!.title;
+      _descriptionController.text = widget.note!.description;
+    }
+  }
 
   @override
   void dispose() {
     super.dispose();
 
-    
     log(_titleController.text);
     log(_descriptionController.text);
 
     final title = _titleController.text;
     final desc = _descriptionController.text;
 
-    final newNote = Note(
-      id : Isar.autoIncrement,
-      title : title,
-      description: desc,
-      lastMod : DateTime.now()
-    );
+    if (widget.note != null) {
+      if (title.isEmpty && desc.isEmpty) {
+        localDb.deleteNote(id: widget.note!.id);
+      } else if (widget.note!.title != title || widget.note!.description != desc ){
+        final newNote = widget.note!.copyWith(
+        title: title,
+        description: desc,
+      );
+      localDb.saveNote(note: newNote);
+      }
+    } else {
+      final newNote = Note(
+        id: Isar.autoIncrement,
+        title: title,
+        description: desc,
+        lastMod: DateTime.now());
+        localDb.saveNote(note: newNote);
+    }
 
-    localDB.saveNote(note: newNote);
-
+    
     _titleController.dispose();
     _descriptionController.dispose();
   }
@@ -52,13 +75,67 @@ class _CreatenoteViewState extends State<CreatenoteView> {
         child: Column(
           children: [
             Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                IconButton(
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
-                  icon: const Icon(Icons.arrow_back),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: IconButton(
+                    icon: const Icon(Icons.arrow_back),
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                  ),
                 ),
+                widget.note != null
+                    ? Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: IconButton(
+                          icon: const Icon(Icons.delete),
+                          onPressed: () {
+                            // show warning.
+
+                            showDialog(
+                                context: context,
+                                builder: (context) {
+                                  return AlertDialog(
+                                    title: Text(
+                                      "Delete Note ?",
+                                      style: GoogleFonts.poppins(fontSize: 20),
+                                    ),
+                                    content: Column(
+                                      mainAxisSize: MainAxisSize.min,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
+                                      children: [
+                                        Lottie.asset(AnimationAsset.delete),
+                                        Text(
+                                          "This note will be permanently deleted.",
+                                          style:
+                                              GoogleFonts.poppins(fontSize: 18),
+                                        ),
+                                      ],
+                                    ),
+                                    actions: [
+                                      TextButton(
+                                          onPressed: () {
+                                            localDb.deleteNote(
+                                                id: widget.note!.id);
+                                            Navigator.pop(context);
+                                            Navigator.pop(context);
+                                          },
+                                          child: const Text("Proceed")),
+                                      TextButton(
+                                          onPressed: () {
+                                            Navigator.pop(context);
+                                          },
+                                          child: const Text("Cancel")),
+                                    ],
+                                  );
+                                });
+                          },
+                        ),
+                      )
+                    : const SizedBox.shrink(),
               ],
             ),
             Padding(
@@ -69,7 +146,9 @@ class _CreatenoteViewState extends State<CreatenoteView> {
                   border: InputBorder.none,
                   hintText: "Title",
                 ),
-                style: GoogleFonts.poppins(fontSize: 25),
+                style: GoogleFonts.poppins(
+                  fontSize: 24,
+                ),
               ),
             ),
             Padding(
@@ -80,7 +159,9 @@ class _CreatenoteViewState extends State<CreatenoteView> {
                   border: InputBorder.none,
                   hintText: "Description",
                 ),
-                style: GoogleFonts.poppins(fontSize: 20),
+                style: GoogleFonts.poppins(
+                  fontSize: 20,
+                ),
               ),
             ),
           ],
