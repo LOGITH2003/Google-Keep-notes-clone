@@ -1,6 +1,6 @@
 # Google Keep notes clone
 
-Local Notes is a new Flutter project designed to help you manage your notes locally on your device. This app provides a simple and efficient way to store, organize, and retrieve your notes without the need for an internet connection.
+A new Flutter project designed to help you manage your notes locally on your device. This app provides a simple and efficient way to store, organize, and retrieve your notes without the need for an internet connection.
 
 ## Features
 
